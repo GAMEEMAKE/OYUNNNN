@@ -1,79 +1,50 @@
+// sorular ve cevaplar
 const questions = [
     {
-        question: "Hangi etken madde ağrı kesici olarak kullanılır?",
-        options: ["Paracetamol", "Ibuprofen", "Aspirin", "Tüm seçenekler"],
-        answer: 3 // Tüm seçenekler doğru
+        question: "Aspirin'in etken maddesi nedir?",
+        answers: ["Asetaminofen", "Asetil salisilik asit", "Ibuprofen", "Naproksen"],
+        correct: 1
     },
-    {
-        question: "Aspirin hangi hastalığın tedavisinde kullanılır?",
-        options: ["Yüksek tansiyon", "Ateş", "Baş ağrısı", "Kalp hastalıkları"],
-        answer: 3
-    },
-    {
-        question: "Hangisi antihistaminik bir ilaçtır?",
-        options: ["Loratadin", "Amoksisilin", "Metformini", "Aspirin"],
-        answer: 0 // Loratadin doğru
-    },
-    {
-        question: "Antibiyotiklerin amacı nedir?",
-        options: ["Ağrıyı kesmek", "Bakteriyel enfeksiyonları tedavi etmek", "Viral enfeksiyonları tedavi etmek", "Ateşi düşürmek"],
-        answer: 1
-    },
-    {
-        question: "Hangisi antidepresan bir ilaçtır?",
-        options: ["Fluoksetin", "Ibuprofen", "Paracetamol", "Klorokin"],
-        answer: 0 // Fluoksetin doğru
-    },
+    // diğer sorular
 ];
 
+// elementi al
+const quizContainer = document.getElementById("quiz-container");
 let currentQuestionIndex = 0;
-let score = 0;
 
-function displayQuestion() {
-    const questionContainer = document.getElementById("question");
-    const optionsContainer = document.getElementById("options");
+// soruları yükle
+function loadQuestion() {
     const currentQuestion = questions[currentQuestionIndex];
+    quizContainer.innerHTML = `<h2>${currentQuestion.question}</h2>`;
 
-    questionContainer.innerText = currentQuestion.question;
-    optionsContainer.innerHTML = ""; // Önceki seçenekleri temizle
-
-    currentQuestion.options.forEach((option, index) => {
+    currentQuestion.answers.forEach((answer, index) => {
         const button = document.createElement("button");
-        button.innerText = option;
-        button.onclick = () => selectOption(index);
-        optionsContainer.appendChild(button);
+        button.innerText = answer;
+        button.addEventListener("click", () => selectAnswer(index));
+        quizContainer.appendChild(button);
     });
 }
 
-function selectOption(index) {
-    if (index === questions[currentQuestionIndex].answer) {
-        score++;
+// cevabı seç
+function selectAnswer(selectedIndex) {
+    const currentQuestion = questions[currentQuestionIndex];
+    const isCorrect = selectedIndex === currentQuestion.correct;
+
+    // kullanıcıya geri bildirim ver
+    if (isCorrect) {
+        alert("Doğru cevap!");
+    } else {
+        alert("Yanlış cevap! Doğru cevap: " + currentQuestion.answers[currentQuestion.correct]);
     }
+
+    // bir sonraki soruya geç
     currentQuestionIndex++;
     if (currentQuestionIndex < questions.length) {
-        displayQuestion();
+        loadQuestion();
     } else {
-        showResult();
+        quizContainer.innerHTML = "<h2>Quiz tamamlandı!</h2>";
     }
 }
 
-function showResult() {
-    const quizContainer = document.getElementById("quiz-container");
-    const resultContainer = document.getElementById("result");
-    const scoreDisplay = document.getElementById("score");
-
-    quizContainer.classList.add("hidden");
-    resultContainer.classList.remove("hidden");
-    scoreDisplay.innerText = `Skorunuz: ${score} / ${questions.length}`;
-}
-
-function restartQuiz() {
-    currentQuestionIndex = 0;
-    score = 0;
-    document.getElementById("quiz-container").classList.remove("hidden");
-    document.getElementById("result").classList.add("hidden");
-    displayQuestion();
-}
-
-// Sayfa yüklendiğinde ilk soruyu göster
-displayQuestion();
+// ilk soruyu yükle
+loadQuestion();
